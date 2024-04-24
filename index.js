@@ -26,13 +26,20 @@ app.use(express.json());
 
 
 io.on('connection',(socket)=>{
+  console.log('user-connected',socket.id);
 
-  socket.on('message',message=>{
-    console.log(message);
+  socket.on('message',({room,message})=>{
+    console.log({room,message});
     //Message from client to server
-    socket.broadcast.emit('receive-message', message);
+    io.to(room).emit('personal-message', message);
 
   });
+
+  socket.on('messages',(message)=>{
+    console.log(socket);
+    io.emit('messages',message)
+  })
+  
 
   socket.on('disconnect',()=>{
     console.log('user has left!!')
@@ -119,6 +126,9 @@ app.get('/', (req, res) => {
   res.send('Hello World!');
 });
 
-httpServer.listen(port, () => {
+httpServer.listen(4000, () => {
+  console.log(`Example app listening on port ${4000}`);
+});
+app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });
