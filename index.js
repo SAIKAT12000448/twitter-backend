@@ -31,15 +31,9 @@ io.on('connection',(socket)=>{
   socket.on('message',({room,message})=>{
     console.log({room,message});
     //Message from client to server
-    io.to(room).emit('personal-message', message);
+    io.to(room).emit('receive-message', message);
 
   });
-
-  socket.on('messages',(message)=>{
-    console.log(socket);
-    io.emit('messages',message)
-  })
-  
 
   socket.on('disconnect',()=>{
     console.log('user has left!!')
@@ -89,7 +83,6 @@ const run = async () => {
 
         // console.log(users);
         const result = await usersCollection.insertOne(users);
-        console.log(result);
   
         res.send(result);
       });
@@ -99,7 +92,6 @@ const run = async () => {
     app.get('/users',async (req,res)=>{
       const cursor =usersCollection.find({});
       const result=await cursor.toArray();
-      console.log(result);
       res.send({data:result});      
     })
     
@@ -107,7 +99,6 @@ const run = async () => {
       const email = req.params.email;
 
       const result = await usersCollection.findOne({});
-        console.log(result);
       if (result?.email) {
         return res.send({ status: true, data: result });
       }
